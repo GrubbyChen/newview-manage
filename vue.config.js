@@ -1,5 +1,5 @@
 module.exports = {
-  baseUrl: process.env.NODE_ENV === 'production' ? '/nvmanage/' : '/',
+  // baseUrl: process.env.NODE_ENV === 'production' ? '/newview/' : '/',
   devServer: {
     port: process.env.VUE_APP_PORT,
     proxy: {

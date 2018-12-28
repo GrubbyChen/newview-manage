@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
 
 Vue.use(Router)
 
@@ -10,8 +9,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      redirect: '/carousel'
     },
     {
       path: '/carousel',
@@ -19,14 +17,14 @@ export default new Router({
       component: () => import('./views/Carousel.vue')
     },
     {
-      path: '/picture',
-      name: 'picture',
-      component: () => import('./views/Picture.vue')
+      path: '/image',
+      name: 'image',
+      component: () => import('./views/Image.vue')
     },
     {
-      path: '/camera',
-      name: 'camera',
-      component: () => import('./views/Camera.vue')
+      path: '/video',
+      name: 'video',
+      component: () => import('./views/Video.vue')
     }
   ]
 })

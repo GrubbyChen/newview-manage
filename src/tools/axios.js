@@ -12,16 +12,12 @@ const http = axios.create({
   }
 })
 
-http.interceptors.request.use(
-  function (config) {
-    config.url = process.env.VUE_APP_PROXY_PREFIX + config.url
-    return config
-  },
-  function (error) {
-    // 对请求错误做些什么
-    return Promise.reject(error)
-  }
-)
+/**
+ * @author xuzilong
+ * @desc 响应拦截器
+ * @desc 内部接口：返回data.data数据
+ * @desc 外部接口：拿取内层有意义的数据
+ */
 http.interceptors.response.use(
   function (response) {
     // 请求错误的处理
@@ -36,9 +32,36 @@ http.interceptors.response.use(
       return Promise.reject(msg)
     }
 
-    return Promise.resolve(response.data)
+    return Promise.resolve(response.data.data)
   },
   function (error) {
+    return Promise.reject(error)
+  }
+)
+
+/**
+ * @author xuzilong
+ * @desc 请求拦截器
+ * @desc 对graphql外部接口作了格式化处理，让其既兼容字符串格式，又支持JSON格式传入
+ * @desc JSON格式如下：
+ * @example
+ * {
+ *   type: 'query',  // （可不填，默认query），可选mutation，query
+ *   name: 'users',  // 请求路由名称
+ *   data: {         // 请求参数
+ *     id: '12345678'
+ *   },
+ *   res: '{id}',    // 查询数据（String类型），可不填，不填会到./response.js里去自动匹配
+ * }
+ */
+http.interceptors.request.use(
+  function (config) {
+    config.url = process.env.VUE_APP_PROXY_PREFIX + config.url
+
+    return config
+  },
+  function (error) {
+    // 对请求错误做些什么
     return Promise.reject(error)
   }
 )

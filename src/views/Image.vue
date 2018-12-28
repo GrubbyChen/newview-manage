@@ -4,7 +4,7 @@
       <a-upload
         name="file"
         :multiple="true"
-        action="/newview/manage/uploadCarousel"
+        action="/newview/manage/uploadImage"
         @change="uploadImages"
       >
         <a-button>
@@ -12,8 +12,7 @@
         </a-button>
       </a-upload>
     </div>
-
-    <a-table :columns="columns" :dataSource="carousels" bordered>
+    <a-table :columns="columns" :dataSource="images" bordered>
       <a slot="filePath" slot-scope="filePath" href="javascript:;">
         <v-img
           :src="filePath"
@@ -31,7 +30,7 @@
       <span slot="action" slot-scope="record" class="table-action">
         <a-upload
           name="file"
-          action="/newview/manage/reuploadCarousel"
+          action="/newview/manage/reuploadImage"
           :data="{ id: record._id }"
           @change="reuploadImage(record, $event)"
         >
@@ -58,27 +57,35 @@
 
 <script>
 import axios from '@/tools/axios'
+import EditableCell from '@/components/EditableCell'
 
 const columns = [{
   title: 'Image',
   dataIndex: 'filePath',
+  width: '200px',
   scopedSlots: { customRender: 'filePath' }
 }, {
+  title: 'Title',
+  scopedSlots: { customRender: 'imageTitle' }
+}, {
   title: 'Action',
-  width: '300px',
+  width: '220px',
   scopedSlots: { customRender: 'action' }
 }]
 
 export default {
-  data: () => ({
-    carousels: [],
-    columns,
-    dialog: false,
-    previewSrc: ''
-  }),
+  components: { EditableCell },
+  data () {
+    return {
+      images: [],
+      columns,
+      dialog: false,
+      previewSrc: ''
+    }
+  },
   methods: {
     async init () {
-      this.carousels = await axios.get('/manage/fetchCarousel')
+      this.images = await axios.get('/manage/fetchImage')
     },
     previewImage (filePath) {
       this.previewSrc = filePath
@@ -96,6 +103,9 @@ export default {
         this.$message.error(`上传失败`)
       }
     },
+    async onCellChange (id, title) {
+      await axios.post('/manage/updateImageInfo', { id, title })
+    },
     reuploadImage (record, info) {
       let { file, file: { status } } = info
       if (status === 'done') {
@@ -111,90 +121,26 @@ export default {
     removeRecord (record) {
       const _this = this
       this.$confirm({
-        title: `删除照片`,
+        title: `删除记录`,
         content: `是否确定要删除？`,
         okText: '删除',
         okType: 'danger',
         cancelText: '取消',
         async onOk () {
           return new Promise(async (resolve, reject) => {
-            await axios.post('/manage/removeCarousel', {
+            await axios.post('/manage/removeImage', {
               id: record._id
             })
             _this.$message.success(`删除成功`)
-            _this.carousels.splice(_this.carousels.indexOf(record), 1)
+            _this.images.splice(_this.images.indexOf(record), 1)
             resolve()
           })
         }
       })
     }
   },
-  async mounted () {
+  mounted () {
     this.init()
   }
 }
 </script>
-
-<style lang="less">
-.nvmanage-carousel {
-  padding: 16px;
-}
-.carousel-panel-flex {
-  position: relative;
-  height: 162px;
-  margin-bottom: 56px;
-}
-.carousel-panel {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 288px;
-  height: 162px;
-  box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.1);
-  transition: box-shadow .2s;
-  &:hover {
-    box-shadow: 0px 0px 16px 2px rgba(0, 0, 0, 0.3);
-    .anticon-close-circle {
-      opacity: 1;
-    }
-  }
-  .anticon-close-circle {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 20px;
-    color: #fafafa;
-    cursor: pointer;
-    opacity: 0;
-    transition: all .2s;
-  }
-}
-.carousel-image {
-  cursor: pointer;
-}
-
-.carousel-panel-upload {
-  border: 2px dashed #dedede;
-  background-color: #fdfdfd;
-  cursor: pointer;
-  &:hover {
-    box-shadow: 0px 0px 16px 2px rgba(0, 0, 0, 0.2);
-  }
-}
-.carousel-upload {
-  &,
-  .ant-upload-btn,
-  .ant-upload-select {
-    display: inline-block;
-  width: 100%;
-  height: 100%;
-  }
-  .anticon-upload {
-    font-size: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-}
-</style>
