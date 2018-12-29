@@ -1,5 +1,5 @@
 module.exports = {
-  baseUrl: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_URL : '/',
+  // baseUrl: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_URL : '/',
   devServer: {
     port: process.env.VUE_APP_PORT,
     proxy: {
