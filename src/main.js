@@ -3,11 +3,17 @@ import './plugins/vuetify'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import Antd from 'ant-design-vue'
+import { Button, Upload, Table, Tooltip, Icon, message } from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import './styles/index.less'
 
-Vue.use(Antd)
+Vue.use(Button)
+Vue.use(Upload)
+Vue.use(Table)
+Vue.use(Tooltip)
+Vue.use(Icon)
+
+Vue.prototype.$message = message
 
 Vue.config.productionTip = false
 
