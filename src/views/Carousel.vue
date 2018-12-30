@@ -14,14 +14,14 @@
     </div>
 
     <a-table :columns="columns" :dataSource="carousels" bordered>
-      <a slot="filePath" slot-scope="filePath" href="javascript:;">
+      <template slot="filePath" slot-scope="filePath">
         <v-img
           :src="filePath"
           :width="144"
           :height="81"
           @click="previewImage(filePath)"
         />
-      </a>
+      </template>
       <template slot="imageTitle" slot-scope="record">
         <editable-cell :text="record.title" @change="onCellChange(record._id, $event)"/>
       </template>
