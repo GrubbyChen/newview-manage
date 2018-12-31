@@ -13,12 +13,13 @@
       </a-upload>
     </div>
     <a-table :columns="columns" :dataSource="images" bordered>
-      <template slot="filePath" slot-scope="filePath">
+      <template slot="filePath" slot-scope="record">
         <v-img
-          :src="filePath"
+          :src="record.smFilePath"
           :width="144"
           :height="81"
-          @click="previewImage(filePath)"
+          @click="previewImage(record.filePath)"
+          style="cursor: pointer;"
         />
       </template>
       <template slot="imageTitle" slot-scope="record">
@@ -61,7 +62,6 @@ import EditableCell from '@/components/EditableCell'
 
 const columns = [{
   title: 'Image',
-  dataIndex: 'filePath',
   width: '200px',
   scopedSlots: { customRender: 'filePath' }
 }, {
@@ -86,6 +86,13 @@ export default {
   methods: {
     async init () {
       this.images = await axios.get('/manage/fetchImage')
+      this.loadImages()
+    },
+    loadImages () {
+      for (let item of this.images) {
+        const img = new Image()
+        img.src = item.filePath
+      }
     },
     previewImage (filePath) {
       this.previewSrc = filePath

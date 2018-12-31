@@ -14,12 +14,13 @@
     </div>
 
     <a-table :columns="columns" :dataSource="carousels" bordered>
-      <template slot="filePath" slot-scope="filePath">
+      <template slot="filePath" slot-scope="render">
         <v-img
-          :src="filePath"
+          :src="render.smFilePath"
           :width="144"
           :height="81"
-          @click="previewImage(filePath)"
+          @click="previewImage(render.filePath)"
+          style="cursor: pointer;"
         />
       </template>
       <template slot="imageTitle" slot-scope="record">
@@ -61,7 +62,6 @@ import axios from '@/tools/axios'
 
 const columns = [{
   title: 'Image',
-  dataIndex: 'filePath',
   scopedSlots: { customRender: 'filePath' }
 }, {
   title: 'Action',
@@ -79,6 +79,13 @@ export default {
   methods: {
     async init () {
       this.carousels = await axios.get('/manage/fetchCarousel')
+      this.loadImages()
+    },
+    loadImages () {
+      for (let item of this.carousels) {
+        const img = new Image()
+        img.src = item.filePath
+      }
     },
     previewImage (filePath) {
       this.previewSrc = filePath
