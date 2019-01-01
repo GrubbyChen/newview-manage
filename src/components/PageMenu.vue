@@ -43,8 +43,9 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      { icon: 'content_copy', text: 'Carousel', router: '/carousel' },
-      { icon: 'image', text: 'Image', router: '/image' },
+      { icon: 'view_carousel', text: 'Carousel', router: '/carousel' },
+      { icon: 'photo', text: 'Photo', router: '/photo' },
+      { icon: 'photo_library', text: 'Album', router: '/album' },
       { icon: 'videocam', text: 'Video', router: '/video' }
     ]
   }),

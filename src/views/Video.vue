@@ -2,19 +2,18 @@
   <v-layout row wrap class="nvmanage-image">
     <div class="page-toolbar">
       <a-button @click="dialog = true">
-        <a-icon type="plus" /> 上传视频
+        <a-icon type="upload" /> 上传视频
       </a-button>
-      <!-- <a-upload
-        name="file"
-        action="/newview/manage/uploadVideo"
-        @change="uploadVideo"
-      >
-        <a-button>
-          <a-icon type="upload" /> Click to Upload
-        </a-button>
-      </a-upload> -->
     </div>
-    <a-table :columns="columns" :dataSource="videos" bordered>
+    <a-table
+      :columns="columns"
+      :dataSource="videos"
+      :rowKey="record => record._id"
+      :pagination="pagination"
+      bordered
+      @change="handleTableChange"
+      :loading="loading"
+    >
       <template slot="videoPreview" slot-scope="record">
         <iframe :src="record.src"></iframe>
       </template>
@@ -25,31 +24,13 @@
         <editable-cell :text="record.title" @change="changeVideoTitle(record._id, $event)"/>
       </template>
       <span slot="action" slot-scope="record" class="table-action">
-        <a-tooltip placement="top" title="删除记录">
-          <a-icon type="delete" @click="removeRecord(record)" />
-        </a-tooltip>
+        <a-popconfirm title='确定要删除这个视频?' placement="left" okText="Yes" cancelText="No" @confirm="removeRecord(record)">
+          <a-tooltip placement="top" title="删除记录">
+            <a-icon type="delete" />
+          </a-tooltip>
+        </a-popconfirm>
       </span>
     </a-table>
-
-    <!-- <v-dialog
-      v-model="dialog"
-    >
-      <v-form v-model="valid" ref="form" class="px-5">
-        <v-layout row mt-4>
-          <v-flex xs3>
-            <v-subheader align-end>Src<span class="required">(必须)</span></v-subheader>
-          </v-flex>
-          <v-flex xs9>
-            <v-text-field
-              v-model="form.src"
-              :rules="srcRules"
-              label="Src"
-              required
-            ></v-text-field>
-          </v-flex>
-        </v-layout>
-      </v-form>
-    </v-dialog> -->
 
     <v-dialog
       v-model="dialog"
@@ -128,6 +109,11 @@ export default {
     return {
       videos: [],
       columns,
+      current: 1,
+      pagination: {
+        pageSize: 6
+      },
+      loading: false,
       dialog: false,
       valid: false,
       form: {
@@ -140,8 +126,23 @@ export default {
     }
   },
   methods: {
-    async init () {
-      this.videos = await axios.get('/manage/fetchVideo')
+    async init (page = 1) {
+      this.loading = true
+      const result = await axios.get('/manage/fetchVideo', {
+        params: {
+          pageSize: 6,
+          page: this.current
+        }
+      })
+      const pagination = { ...this.pagination }
+      pagination.total = result.total
+      this.videos = result.data
+      this.loading = false
+      this.pagination = pagination
+    },
+    handleTableChange (pagination) {
+      this.current = pagination.current
+      this.init()
     },
     async createVideo () {
       if (this.$refs.form.validate()) {
@@ -161,25 +162,12 @@ export default {
     async changeVideoTitle (id, title) {
       await axios.post('/manage/updateVideoInfo', { id, title })
     },
-    removeRecord (record) {
-      const _this = this
-      this.$confirm({
-        title: `删除记录`,
-        content: `是否确定要删除？`,
-        okText: '删除',
-        okType: 'danger',
-        cancelText: '取消',
-        async onOk () {
-          return new Promise(async (resolve, reject) => {
-            await axios.post('/manage/removeVideo', {
-              id: record._id
-            })
-            _this.$message.success(`删除成功`)
-            _this.videos.splice(_this.videos.indexOf(record), 1)
-            resolve()
-          })
-        }
+    async removeRecord (record) {
+      await axios.post('/manage/removeVideo', {
+        id: record._id
       })
+      this.$message.success(`删除成功`)
+      this.videos.splice(this.videos.indexOf(record), 1)
     }
   },
   mounted () {

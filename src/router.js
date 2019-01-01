@@ -17,9 +17,14 @@ export default new Router({
       component: () => import('./views/Carousel.vue')
     },
     {
-      path: '/image',
-      name: 'image',
-      component: () => import('./views/Image.vue')
+      path: '/photo',
+      name: 'photo',
+      component: () => import('./views/Photo.vue')
+    },
+    {
+      path: '/album',
+      name: 'album',
+      component: () => import('./views/Album.vue')
     },
     {
       path: '/video',

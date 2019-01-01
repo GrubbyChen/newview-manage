@@ -10,21 +10,13 @@
       <v-toolbar-side-icon @click.stop="changeDrawer"></v-toolbar-side-icon>
       <span class="hidden-sm-and-down">Newview</span>
     </v-toolbar-title>
-    <!-- <v-text-field
-      flat
-      solo-inverted
-      hide-details
-      prepend-inner-icon="search"
-      label="Search"
-      class="hidden-sm-and-down"
-    ></v-text-field> -->
     <v-spacer></v-spacer>
-    <v-btn icon>
+    <!-- <v-btn icon>
       <v-icon>apps</v-icon>
     </v-btn>
     <v-btn icon>
       <v-icon>notifications</v-icon>
-    </v-btn>
+    </v-btn> -->
     <v-btn icon large>
       <v-avatar size="32px" tile>
         <img
