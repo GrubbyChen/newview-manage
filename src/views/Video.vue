@@ -126,7 +126,7 @@ export default {
     }
   },
   methods: {
-    async init (page = 1) {
+    async init () {
       this.loading = true
       const result = await axios.get('/manage/fetchVideo', {
         params: {
@@ -167,7 +167,7 @@ export default {
         id: record._id
       })
       this.$message.success(`删除成功`)
-      this.videos.splice(this.videos.indexOf(record), 1)
+      this.init()
     }
   },
   mounted () {

@@ -89,7 +89,7 @@ export default {
       columns,
       current: 1,
       pagination: {
-        pageSize: 9
+        pageSize: 6
       },
       loading: false,
       dialog: false,
@@ -139,7 +139,7 @@ export default {
         id: record._id
       })
       this.$message.success(`删除成功`)
-      this.images.splice(this.images.indexOf(record), 1)
+      this.init()
       // const images = [...this.images]
       // this.images = images.filter(item => item._id !== record._id)
     }
